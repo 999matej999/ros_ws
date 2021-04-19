@@ -149,6 +149,8 @@ int main(int argc, char **argv) {
 
         float quat[4] = {};
         ohmd_device_getf(hmd, OHMD_ROTATION_QUAT, quat);
+        float pos[3] = {};
+        ohmd_device_getf(hmd, OHMD_POSITION_VECTOR, pos);
 
         // read controls
         if (control_count) {
@@ -170,9 +172,9 @@ int main(int argc, char **argv) {
         msg.header.frame_id = "origin";
 
         msg.pose.position;
-        msg.pose.position.x = 0.0;
-        msg.pose.position.y = 0.0;
-        msg.pose.position.z = 0.0;
+        msg.pose.position.x = pos[0];
+        msg.pose.position.y = pos[1];
+        msg.pose.position.z = pos[2];
         msg.pose.orientation.x = quat[0];
         msg.pose.orientation.y = quat[1];
         msg.pose.orientation.z = quat[2];
