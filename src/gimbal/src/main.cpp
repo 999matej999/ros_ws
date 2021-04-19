@@ -3,6 +3,8 @@
 #include "ros/ros.h"
 #include "geometry_msgs/PoseStamped.h"
 
+#include <roboutils/utils.h>
+
 /**
  * This tutorial demonstrates simple receipt of messages over the ROS system.
  */
@@ -29,6 +31,7 @@ void chatterCallback(const geometry_msgs::PoseStamped& msg)
 
 int main(int argc, char **argv)
 {
+  RoboUtils::delay(1000);
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line.
