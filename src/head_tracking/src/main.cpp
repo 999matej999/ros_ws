@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ros/ros.h"
+#include "geometry_msgs/PoseStamped.h"
+
+
 void ohmd_sleep(double);
 
 // gets float values from the device and prints them
@@ -30,9 +34,6 @@ void print_infoi(ohmd_device* hmd, const char* name, int len, ohmd_int_value val
         printf("%d ", iv[i]);
     printf("\n");
 }
-
-#include "ros/ros.h"
-#include "geometry_msgs/PoseStamped.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "head_tracking");
