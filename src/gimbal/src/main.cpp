@@ -41,30 +41,6 @@ class RosNode
 
 };
 
-/**
- * This tutorial demonstrates simple receipt of messages over the ROS system.
- */
-void chatterCallback(const geometry_msgs::PoseStamped& msg)
-{
-  std::cout << "header: " << std::endl;
-  std::cout << "  seq: " << msg.header.seq << std::endl;
-  std::cout << "  stamp: " << std::endl;
-  std::cout << "    secs: " << msg.header.stamp.sec << std::endl;
-  std::cout << "    nsecs: " << msg.header.stamp.nsec << std::endl;
-  std::cout << "  frame_id: " << msg.header.frame_id << std::endl;
-
-  std::cout << "pose: " << std::endl;
-  std::cout << "  position: " << std::endl;
-  std::cout << "    x: " << msg.pose.position.x << std::endl;
-  std::cout << "    y: " << msg.pose.position.y << std::endl;
-  std::cout << "    z: " << msg.pose.position.z << std::endl;
-  std::cout << "  orientation: " << std::endl;
-  std::cout << "    x: " << msg.pose.orientation.x << std::endl;
-  std::cout << "    y: " << msg.pose.orientation.y << std::endl;
-  std::cout << "    z: " << msg.pose.orientation.z << std::endl;
-  std::cout << "    w: " << msg.pose.orientation.w << std::endl;
-}
-
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "gimbal");
