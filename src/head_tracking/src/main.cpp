@@ -147,6 +147,9 @@ int main(int argc, char **argv) {
         print_infof(hmd, "rotation quat:", 4, OHMD_ROTATION_QUAT);
         print_infof(hmd, "position vec: ", 3, OHMD_POSITION_VECTOR);
 
+        float quat[4] = {};
+        ohmd_device_getf(hmd, OHMD_ROTATION_QUAT, quat);
+
         // read controls
         if (control_count) {
             float control_state[256];
@@ -170,10 +173,10 @@ int main(int argc, char **argv) {
         msg.pose.position.x = 0.0;
         msg.pose.position.y = 0.0;
         msg.pose.position.z = 0.0;
-        msg.pose.orientation.x = 4.0;
-        msg.pose.orientation.y = 5.0;
-        msg.pose.orientation.z = 6.0;
-        msg.pose.orientation.w = 7.0;
+        msg.pose.orientation.x = quat[0];
+        msg.pose.orientation.y = quat[1];
+        msg.pose.orientation.z = quat[2];
+        msg.pose.orientation.w = quat[3];
 
         publisher.publish(msg);
 
