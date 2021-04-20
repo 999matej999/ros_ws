@@ -5,20 +5,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Load catkin and all dependencies required for this package
-set(CATKIN_DEPS roscpp diagnostic_updater sensor_msgs roslint)
+set(CATKIN_DEPS roscpp sensor_msgs)
 find_package(catkin REQUIRED ${CATKIN_DEPS})
-
-roslint_cpp()
 
 catkin_package(DEPENDS sensor_msgs)
 
 # Look for <linux/joystick.h>
 include(CheckIncludeFiles)
 check_include_files(linux/joystick.h HAVE_LINUX_JOYSTICK_H)
-
-if(CATKIN_ENABLE_TESTING)
-  roslint_add_test()
-endif()
 
 if(HAVE_LINUX_JOYSTICK_H)
   include_directories(msg/cpp ${catkin_INCLUDE_DIRS})
