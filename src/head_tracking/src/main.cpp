@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     ros::NodeHandle n;
 
     ros::Publisher publisher = n.advertise<geometry_msgs::PoseStamped>("/head", 1);
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(100);
 
 
 
