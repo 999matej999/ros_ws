@@ -5,6 +5,8 @@
 
 #include <roboutils/utils.h>
 
+geometry_msgs::PoseStamped new_msg = {};
+
 class RosNode
 {
 
@@ -33,6 +35,8 @@ class RosNode
       std::cout << "    y: " << msg.pose.orientation.y << std::endl;
       std::cout << "    z: " << msg.pose.orientation.z << std::endl;
       std::cout << "    w: " << msg.pose.orientation.w << std::endl;
+
+      new_msg = msg;
     }
 
   private:
@@ -47,7 +51,13 @@ int main(int argc, char **argv)
 
   RosNode node;
 
-  ros::spin();
+  while(ros::ok())
+  {
+    ros::spinOnce();
+
+    // here you can place som code
+    std::cout << "----- x: " << new_msg.pose.orientation.x << std::endl;
+  }
 
   return 0;
 }
