@@ -15,5 +15,5 @@ catkin_package()
 ## Build talker and listener
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(car src/main.cpp)
+add_executable(car src/main.cpp src/PCA9685.cpp src/PCA9685Servo.cpp)
 target_link_libraries(car ${catkin_LIBRARIES} libroboutils)

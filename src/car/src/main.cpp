@@ -4,6 +4,11 @@
 #include <sensor_msgs/Joy.h>
 
 #include <roboutils/utils.h>
+#include <roboutils/I2C.h>
+
+#include "PCA9685.h"
+#include "PCA9685Servo.h"
+using namespace RoboUtils;
 
 sensor_msgs::Joy new_msg = {};
 
@@ -56,6 +61,10 @@ int main(int argc, char **argv)
 
   RosNode node;
 
+  auto i2c = new I2C();
+  PCA9685Servo servo1(i2c);
+  PCA9685Servo servo2(i2c);
+
   while(ros::ok())
   {
     ros::spinOnce();
@@ -63,7 +72,9 @@ int main(int argc, char **argv)
     if(new_msg.header.seq > 0)
     {
       // here you can place some code
-      std::cout << "----- x: " << new_msg.buttons[0] << std::endl;
+      std::cout << "----- x: " << new_msg.axes[1] << "----- y: " << new_msg.axes[3] << std::endl;
+      servo1.SetDirection(3,new_msg.axes[1]);
+      servo2.SetDirection(6,new_msg.axes[3]);
     }
   }
   
