@@ -5,6 +5,8 @@
 
 #include <roboutils/utils.h>
 
+sensor_msgs::Joy new_msg = {};
+
 class RosNode
 {
 
@@ -38,6 +40,8 @@ class RosNode
         std::cout << msg.buttons[i];
       }
       std::cout << "]" << std::endl;
+
+      new_msg = msg;
     }
 
   private:
@@ -52,7 +56,16 @@ int main(int argc, char **argv)
 
   RosNode node;
 
-  ros::spin();
-
+  while(ros::ok())
+  {
+    ros::spinOnce();
+    
+    if(new_msg.header.seq > 0)
+    {
+      // here you can place some code
+      std::cout << "----- x: " << new_msg.buttons[0] << std::endl;
+    }
+  }
+  
   return 0;
 }
