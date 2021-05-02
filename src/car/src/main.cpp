@@ -65,6 +65,11 @@ int main(int argc, char **argv)
   PCA9685Servo servo1(i2c);
   PCA9685Servo servo2(i2c);
 
+  bool turbo_button_last = false;
+  bool turbo = false;
+
+  float rychlost=0;
+
   while(ros::ok())
   {
     ros::spinOnce();
@@ -72,9 +77,19 @@ int main(int argc, char **argv)
     if(new_msg.header.seq > 0)
     {
       // here you can place some code
-      std::cout << "----- x: " << new_msg.axes[1] << "----- y: " << new_msg.axes[3] << std::endl;
-      servo1.SetDirection(3,new_msg.axes[1]);
+      std::cout << "----- x: " << new_msg.axes[1] << "----- y: " << new_msg.axes[3] << "Turbo: " << new_msg.buttons[9] << "Turbo: " << turbo << "Rychlost: " << rychlost << std::endl;
+      servo1.SetDirection(3,rychlost);
       servo2.SetDirection(6,new_msg.axes[3]);
+
+      if(new_msg.buttons[9] && !turbo_button_last)
+      {
+          turbo = !turbo;
+      }
+      turbo_button_last = new_msg.buttons[9];
+
+      if(turbo==1) rychlost = new_msg.axes[1];
+      if(turbo==0) rychlost = new_msg.axes[1]/5;
+
     }
   }
   
