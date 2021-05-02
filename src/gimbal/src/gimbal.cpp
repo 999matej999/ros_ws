@@ -46,10 +46,10 @@ void Gimbal::set(geometry_msgs::Quaternion quat, ros::Time stamp)
 	setAngle(ang_req.pitch, MOTOR_PITCH, stamp.sec, stamp.nsec);
 	setAngle(ang_req.yaw, MOTOR_YAW, stamp.sec, stamp.nsec);
 
-	std::cout.precision(2);
+	/*std::cout.precision(2);
 	std::cout << "YAW =\t" << std::fixed << ang_req.yaw << "\t\t";
 	std::cout << "PITCH =\t" << std::fixed << ang_req.pitch << "\t\t";
-	std::cout << "ROLL =\t" << std::fixed << ang_req.roll << std::endl;
+	std::cout << "ROLL =\t" << std::fixed << ang_req.roll << std::endl;*/
 }
 
 void Gimbal::setAngle(double angle_req, int16_t motor, int64_t time_sec, int64_t time_nsec)
@@ -207,8 +207,8 @@ void Gimbal::home()
 
 void Gimbal::endstopsControl()
 {
-	endstop_yaw = adc.readChannel(0) > HALL_SENSOR_THRESHOLD; // yaw axis endstop
-	endstop_pitch = adc.readChannel(1) > HALL_SENSOR_THRESHOLD; // pitch axis endstop
+	endstop_yaw = adc.readChannel(0) > HALL_SENSOR_THRESHOLD_YAW; // yaw axis endstop
+	endstop_pitch = adc.readChannel(1) > HALL_SENSOR_THRESHOLD_PITCH; // pitch axis endstop
 
 	if(endstop_yaw) speed_yaw = 0;
 	if(endstop_pitch) speed_pitch = 0;

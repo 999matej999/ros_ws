@@ -46,7 +46,7 @@
 
 #define MOTOR_YAW           0
 #define MOTOR_PITCH         1
-#define DEFAULT_SPEED       90      // [number of impulses/s]
+#define DEFAULT_SPEED       30      // [number of impulses/s]
 #define MAX_SPEED           140     // [number of impulses/s]
 #define MIN_SPEED           70      // [number of impulses/s]
 #define TIME_OUT            0.1     // PID loop elapsed time limit [s]
@@ -54,7 +54,8 @@
 #define YAW_OFFSET          180     // YAW offset for home position
 #define PITCH_OFFSET        90      // PITCH offset for home possition
 
-#define HALL_SENSOR_THRESHOLD 2700
+#define HALL_SENSOR_THRESHOLD_YAW 2680
+#define HALL_SENSOR_THRESHOLD_PITCH 2700
 
 #include "geometry_msgs/PoseStamped.h"
 #include <roboutils/I2C.h>

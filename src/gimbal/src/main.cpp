@@ -33,15 +33,15 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "gimbal");
 
-	RosNode node;
-	ros::Rate loop_rate(100);
-
 	auto i2c = new RoboUtils::I2C();
 
 	Gimbal gimbal(i2c);
 
 	gimbal.home();
 
+	RosNode node;
+	ros::Rate loop_rate(100);
+	
 	while(ros::ok())
 	{
 		ros::spinOnce();
