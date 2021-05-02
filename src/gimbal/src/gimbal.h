@@ -46,6 +46,7 @@ public:
 
 	void init();
 	void home();
+	void set(geometry_msgs::Quaternion quat, ros::Time stamp);
 	void endstopsControl();
 	void resetAngle(int16_t motor);
 	void setAngle(double angle_req, int16_t motor, int64_t time_sec = -1, int64_t time_nsec = -1);

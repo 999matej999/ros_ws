@@ -17,7 +17,22 @@ Gimbal::~Gimbal()
 
 void Gimbal::run()
 {
+	//endstopsControl();
 	km2_drive(fd, 0x71, speed_yaw, speed_pitch);
+}
+
+void Gimbal::set(geometry_msgs::Quaternion quat, ros::Time stamp)
+{
+	EulerAngles ang_req = toEulerAngles(quat);
+	//EulerAngles ang_req = ToDegrees(ang_req); // only for second variant of calculations angles
+
+	setAngle(ang_req.pitch, MOTOR_PITCH, stamp.sec, stamp.nsec);
+	setAngle(ang_req.yaw, MOTOR_YAW, stamp.sec, stamp.nsec);
+
+	std::cout.precision(2);
+	std::cout << "YAW =\t" << std::fixed << ang_req.yaw << "\t\t";
+	std::cout << "PITCH =\t" << std::fixed << ang_req.pitch << "\t\t";
+	std::cout << "ROLL =\t" << std::fixed << ang_req.roll << std::endl;
 }
 
 void Gimbal::setAngle(double angle_req, int16_t motor, int64_t time_sec, int64_t time_nsec)

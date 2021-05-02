@@ -30,8 +30,6 @@ class RosNode
 
 int main(int argc, char **argv)
 {
-	EulerAngles ang_req;
-
 	ros::init(argc, argv, "gimbal");
 
 	RosNode node;
@@ -42,27 +40,12 @@ int main(int argc, char **argv)
 	gimbal.init();
 	//gimbal.home();
 
-	geometry_msgs::Quaternion quat;
-
 	while (ros::ok())
 	{
 		ros::spinOnce();
 
-		quat = new_msg.pose.orientation;
-
-		ang_req = toEulerAngles(quat);
-
-		//ang_req = ToDegrees(ang_req); // only for second variant of calculations angles
-
-		//gimbal.EndstopsControl();
-		gimbal.setAngle(ang_req.pitch, MOTOR_PITCH, new_msg.header.stamp.sec, new_msg.header.stamp.nsec);
-		gimbal.setAngle(ang_req.yaw, MOTOR_YAW, new_msg.header.stamp.sec, new_msg.header.stamp.nsec);
+		gimbal.set(new_msg.pose.orientation, new_msg.header.stamp);
 		gimbal.run();
-
-		std::cout.precision(2);
-		std::cout << "YAW =\t" << std::fixed << ang_req.yaw << "\t\t";
-		std::cout << "PITCH =\t" << std::fixed << ang_req.pitch << "\t\t";
-		std::cout << "ROLL =\t" << std::fixed << ang_req.roll << std::endl;
 
 		loop_rate.sleep();
 	}
