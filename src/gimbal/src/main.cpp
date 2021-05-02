@@ -7,10 +7,6 @@
 
 #include "gimbal.h"
 
-#include <unistd.h>
-#include <cstdlib>
-#include <signal.h>
-
 geometry_msgs::PoseStamped new_msg = {};
 
 class RosNode
@@ -42,9 +38,10 @@ int main(int argc, char **argv)
   RosNode node;
   ros::Rate loop_rate(100);
 
-  fd = i2c_init(1); // i2c init
-  GimbalInit();
-  //GimbalHome();
+  Gimbal gimbal;
+
+  gimbal.init();
+  //gimbal.home();
 
   while (ros::ok())
   {
@@ -55,14 +52,14 @@ int main(int argc, char **argv)
     quat.y = new_msg.pose.orientation.y;
     quat.z = new_msg.pose.orientation.z;
 
-    ang_req = ToEulerAngles(quat);
+    ang_req = toEulerAngles(quat);
 
     //ang_req = ToDegrees(ang_req); // only for second variant of calculations angles
 
-    EndstopsControl();
-    SetAngle(ang_req.pitch, MOTOR_PITCH, new_msg.header.stamp.sec, new_msg.header.stamp.nsec);
-    SetAngle(ang_req.yaw, MOTOR_YAW, new_msg.header.stamp.sec, new_msg.header.stamp.nsec);
-    km2_drive(fd, 0x71, speed_yaw, speed_pitch);
+    //gimbal.EndstopsControl();
+    gimbal.setAngle(ang_req.pitch, MOTOR_PITCH, new_msg.header.stamp.sec, new_msg.header.stamp.nsec);
+    gimbal.setAngle(ang_req.yaw, MOTOR_YAW, new_msg.header.stamp.sec, new_msg.header.stamp.nsec);
+    gimbal.run();
 
     std::cout.precision(2);
     std::cout << "YAW =\t" << std::fixed << ang_req.yaw << "\t\t";
@@ -71,7 +68,6 @@ int main(int argc, char **argv)
 
     loop_rate.sleep();
   }
-  i2c_close(fd); // i2c close
 
   return 0;
 }

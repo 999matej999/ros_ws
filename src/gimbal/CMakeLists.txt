@@ -15,6 +15,6 @@ catkin_package()
 ## Build talker and listener
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(gimbal src/main.cpp)
+add_executable(gimbal src/main.cpp src/gimbal.cpp)
 
 target_link_libraries(gimbal ${catkin_LIBRARIES} libroboutils)
