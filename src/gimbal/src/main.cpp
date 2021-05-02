@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
 	Gimbal gimbal(i2c);
 
-	//gimbal.home();
+	gimbal.home();
 
 	while(ros::ok())
 	{

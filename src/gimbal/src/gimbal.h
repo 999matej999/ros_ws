@@ -54,8 +54,11 @@
 #define YAW_OFFSET          180     // YAW offset for home position
 #define PITCH_OFFSET        90      // PITCH offset for home possition
 
+#define HALL_SENSOR_THRESHOLD 2700
+
 #include "geometry_msgs/PoseStamped.h"
 #include <roboutils/I2C.h>
+#include <roboutils/ADC.h>
 
 struct EulerAngles {
     double roll, pitch, yaw;
@@ -81,6 +84,7 @@ public:
 
 private:
 	RoboUtils::I2C *i2c;
+	RoboUtils::ADC adc;
 	uint8_t addr;
 	
 	// timing -------------------------------------------------------------------

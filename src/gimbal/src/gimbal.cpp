@@ -3,13 +3,11 @@
 #include <math.h>
 #include <roboutils/utils.h>
 
-Gimbal::Gimbal(RoboUtils::I2C *i2c, uint8_t addr)
+Gimbal::Gimbal(RoboUtils::I2C *i2c, uint8_t addr): adc(i2c)
 {
 	this->i2c = i2c;
 	this->addr = addr;
 
-	//pinMode(24, INPUT); // yaw axis endstop
-	//pinMode(25, INPUT); // pitch axis endstop
 	resetAngle(MOTOR_YAW); // reset angle yaw
 	resetAngle(MOTOR_PITCH); // reset angle pitch
 }
@@ -209,11 +207,11 @@ void Gimbal::home()
 
 void Gimbal::endstopsControl()
 {
-	endstop_yaw = 1;//digitalRead(24);
-	endstop_pitch = 1;//digitalRead(25);
+	endstop_yaw = adc.readChannel(0) > HALL_SENSOR_THRESHOLD; // yaw axis endstop
+	endstop_pitch = adc.readChannel(1) > HALL_SENSOR_THRESHOLD; // pitch axis endstop
 
-	if (endstop_yaw) speed_yaw = 0;
-	if (endstop_pitch) speed_pitch = 0;
+	if(endstop_yaw) speed_yaw = 0;
+	if(endstop_pitch) speed_pitch = 0;
 }
 
 void Gimbal::resetAngle(int16_t motor)
@@ -244,23 +242,6 @@ EulerAngles toEulerAngles(geometry_msgs::Quaternion q)
 	a.pitch = std::max(-90.0, std::min(a.pitch, 90.0)); // limit (-90; 90) [°]
 
 	a.yaw = std::max(-90.0, std::min(a.yaw, 90.0)); // limit (-90; 90) [°]
-
-	#if 0
-	// roll (x-axis rotation)
-	double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-	double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-	angles.roll = std::atan2(sinr_cosp, cosr_cosp);
-
-	// pitch (y-axis rotation)
-	double sinp = 2 * (q.w * q.y - q.z * q.x);
-	if (std::abs(sinp) >= 1) angles.pitch = std::copysign(M_PI / 2, sinp); // use 90 degrees if out of range
-	else angles.pitch = std::asin(sinp);
-
-	// yaw (z-axis rotation)
-	double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-	double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-	angles.yaw = std::atan2(siny_cosp, cosy_cosp);
-	#endif
 
 	return a;
 }
