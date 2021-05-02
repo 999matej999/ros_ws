@@ -28,16 +28,14 @@
 #define YAW_OFFSET          180     // YAW offset for home position
 #define PITCH_OFFSET        90      // PITCH offset for home possition
 
-struct Quaternion {
-    double w, x, y, z;
-};
+#include "geometry_msgs/PoseStamped.h"
 
 struct EulerAngles {
     double roll, pitch, yaw;
 };
 
 EulerAngles toDegrees(EulerAngles angles);
-EulerAngles toEulerAngles(Quaternion q);
+EulerAngles toEulerAngles(geometry_msgs::Quaternion q);
 
 class Gimbal
 {

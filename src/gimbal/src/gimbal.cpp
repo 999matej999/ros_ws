@@ -208,7 +208,7 @@ void Gimbal::resetAngle(int16_t motor)
 }
 
 
-EulerAngles toEulerAngles(Quaternion q)
+EulerAngles toEulerAngles(geometry_msgs::Quaternion q)
 {
 	EulerAngles a;
 
