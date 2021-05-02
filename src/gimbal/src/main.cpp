@@ -13,13 +13,6 @@
 
 geometry_msgs::PoseStamped new_msg = {};
 
-// Define the function to be called when ctrl+c (SIGINT) is sent to process
-void signal_callback_handler(int signum) {
-   std::cout << "Caught signal " << signum << std::endl;
-   // Terminate program
-   exit(signum);
-}
-
 class RosNode
 {
   public:
@@ -48,9 +41,6 @@ int main(int argc, char **argv)
 
   RosNode node;
   ros::Rate loop_rate(100);
-
-  // Register signal and signal handler
-  signal(SIGINT, signal_callback_handler);
 
   fd = i2c_init(1); // i2c init
   GimbalInit();
