@@ -18,6 +18,32 @@
 #ifndef __GIMBAL_H__
 #define __GIMBAL_H__
 
+// default I2C address of module
+#define ADDR_KM2_DEFAULT      0x71
+
+// KM2 registers
+#define KM2_SPEED             0x00   // RW 2x uint16_t
+#define KM2_ODOMETRY          0x01   // R- 2x uint32_t
+#define KM2_STATUS            0x01   // RW 1x uint16_t
+
+#define KM2_CMDRESET          0xE0   // -W no data
+#define KM2_CMDLOAD           0xE1   // -W no data
+#define KM2_CMDSTORE          0xE2   // -W no data
+
+#define KM2_CFGMAXSPD         0xF0    // RW 1x int16_t
+#define KM2_CFGTIMEOUT        0xF1    // RW 1x uint16_t
+#define KM2_CFGTIMEOUTPWOFF   0xF2    // RW 1x uint16_t
+#define KM2_CFGADDR           0xFF    // RW 1x uint8_t (or 2x uint8_t)
+
+// KM2 register values
+
+// KM2_CFGADDR -----------------------------------------------------------------
+
+#define KM2_CFGADDR_ADDR          (0x7F << 1)  
+#define KM2_CFGADDR_ADDR_(v)      ((v) << 1)
+#define KM2_CFGADDR_BCASTEN       (0x01)      // if set, device will respond on addr 0 too
+
+
 #define MOTOR_YAW           0
 #define MOTOR_PITCH         1
 #define DEFAULT_SPEED       90      // [number of impulses/s]
@@ -29,6 +55,7 @@
 #define PITCH_OFFSET        90      // PITCH offset for home possition
 
 #include "geometry_msgs/PoseStamped.h"
+#include <roboutils/I2C.h>
 
 struct EulerAngles {
     double roll, pitch, yaw;
@@ -41,18 +68,20 @@ class Gimbal
 {
 
 public:
-	Gimbal();
+	Gimbal(RoboUtils::I2C *i2c, uint8_t addr = ADDR_KM2_DEFAULT);
 	~Gimbal();
 
-	void init();
 	void home();
 	void set(geometry_msgs::Quaternion quat, ros::Time stamp);
 	void endstopsControl();
 	void resetAngle(int16_t motor);
 	void setAngle(double angle_req, int16_t motor, int64_t time_sec = -1, int64_t time_nsec = -1);
 	void run();
+	void drive(int16_t left, int16_t right);
 
 private:
+	RoboUtils::I2C *i2c;
+	uint8_t addr;
 	
 	// timing -------------------------------------------------------------------
 	long double actual_time_pitch, actual_time_yaw, prev_time_pitch, prev_time_yaw;
@@ -96,9 +125,6 @@ private:
 	double e_prev_pitch = 0;
 
 	double hysteresis = 0.01; // hysteresis +- [°]
-
-	// others
-	int fd; // for i2c init
 
 };
 

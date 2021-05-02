@@ -4,6 +4,7 @@
 #include "geometry_msgs/PoseStamped.h"
 
 #include <roboutils/utils.h>
+#include <roboutils/I2C.h>
 
 #include "gimbal.h"
 
@@ -35,12 +36,13 @@ int main(int argc, char **argv)
 	RosNode node;
 	ros::Rate loop_rate(100);
 
-	Gimbal gimbal;
+	auto i2c = new RoboUtils::I2C();
 
-	gimbal.init();
+	Gimbal gimbal(i2c);
+
 	//gimbal.home();
 
-	while (ros::ok())
+	while(ros::ok())
 	{
 		ros::spinOnce();
 
@@ -49,6 +51,8 @@ int main(int argc, char **argv)
 
 		loop_rate.sleep();
 	}
+
+	delete i2c;
 
 	return 0;
 }

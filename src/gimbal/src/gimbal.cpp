@@ -1,24 +1,43 @@
+#include "gimbal.h"
 #include <iostream>
 #include <math.h>
-#include "gimbal.h"
 #include <roboutils/utils.h>
-#include "i2c.h"
-#include "km2.h"
 
-Gimbal::Gimbal()
+Gimbal::Gimbal(RoboUtils::I2C *i2c, uint8_t addr)
 {
-	fd = i2c_init(1); // i2c init
+	this->i2c = i2c;
+	this->addr = addr;
+
+	//pinMode(24, INPUT); // yaw axis endstop
+	//pinMode(25, INPUT); // pitch axis endstop
+	resetAngle(MOTOR_YAW); // reset angle yaw
+	resetAngle(MOTOR_PITCH); // reset angle pitch
 }
 
 Gimbal::~Gimbal()
 {
-  i2c_close(fd); // i2c close
+
 }
 
 void Gimbal::run()
 {
 	//endstopsControl();
-	km2_drive(fd, 0x71, speed_yaw, speed_pitch);
+	drive(speed_yaw, speed_pitch);
+}
+
+void Gimbal::drive(int16_t left, int16_t right)
+{
+	int16_t values[2] = { left, right };
+	
+	try
+	{
+		i2c->write16bitArray(addr, KM2_SPEED, values, 2);
+	}
+	catch(const char *error)
+	{
+		std::cout << "Motors: " << error << std::endl;
+	}
+
 }
 
 void Gimbal::set(geometry_msgs::Quaternion quat, ros::Time stamp)
@@ -157,14 +176,6 @@ void Gimbal::setAngle(double angle_req, int16_t motor, int64_t time_sec, int64_t
 	//std::cout << angle_yaw << "\t" << angle_pitch << std::endl;
 }
 
-void Gimbal::init()
-{
-	//pinMode(24, INPUT); // yaw axis endstop
-	//pinMode(25, INPUT); // pitch axis endstop
-	resetAngle(MOTOR_YAW); // reset angle yaw
-	resetAngle(MOTOR_PITCH); // reset angle pitch
-}
-
 void Gimbal::home()
 {
 	speed_pitch = -DEFAULT_SPEED;
@@ -172,7 +183,7 @@ void Gimbal::home()
 	while(1) // set gimbal to endstop position ------------------
 	{
 		endstopsControl();
-		km2_drive(fd, 0x71, speed_yaw, speed_pitch);
+		drive(speed_yaw, speed_pitch);
 		if (endstop_pitch && endstop_yaw) break;
 	}
 	endstop_yaw = endstop_pitch = 0; // reset endstops
@@ -185,7 +196,7 @@ void Gimbal::home()
 	{
 		setAngle(YAW_OFFSET, MOTOR_YAW);
 		setAngle(PITCH_OFFSET, MOTOR_PITCH);
-		km2_drive(fd, 0x71, speed_yaw, speed_pitch);
+		drive(speed_yaw, speed_pitch);
 		// break when reach position
 		if (speed_yaw == 0 && angle_yaw > YAW_OFFSET/2 && speed_pitch == 0 && angle_pitch > PITCH_OFFSET/2) break;
 	}
