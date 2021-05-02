@@ -19,7 +19,6 @@
 #define GIMBAL_GIMBAL_H
 
 #include <iostream>
-#include <wiringPi.h>
 #include <sys/utsname.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -128,7 +127,7 @@ void SetAngle(double angle_req, int16_t motor, int64_t time_sec = -1, int64_t ti
                 // read actual time
                 if (time_sec == -1 && time_nsec == -1)
                 {
-                    actual_time_yaw = millis();
+                    actual_time_yaw = RoboUtils::millis();
                     actual_time_yaw /= 1000;
                 }
                 else actual_time_yaw = time_sec+time_pom;
@@ -183,7 +182,7 @@ void SetAngle(double angle_req, int16_t motor, int64_t time_sec = -1, int64_t ti
                 // read actual time
                 if (time_sec == -1 && time_nsec == -1) 
                 {
-                    actual_time_pitch = millis();
+                    actual_time_pitch = RoboUtils::millis();
                     actual_time_pitch /= 1000;
                 }
                 else actual_time_pitch = time_sec+time_pom;
@@ -234,8 +233,8 @@ void SetAngle(double angle_req, int16_t motor, int64_t time_sec = -1, int64_t ti
 
 void GimbalInit()
 {
-    pinMode(24, INPUT); // yaw axis endstop
-    pinMode(25, INPUT); // pitch axis endstop
+    //pinMode(24, INPUT); // yaw axis endstop
+    //pinMode(25, INPUT); // pitch axis endstop
     ResetAngle(MOTOR_YAW); // reset angle yaw
     ResetAngle(MOTOR_PITCH); // reset angle pitch
 }
@@ -253,7 +252,7 @@ void GimbalHome()
     endstop_yaw = endstop_pitch = 0; // reset endstops
     ResetAngle(MOTOR_YAW); // reset angle yaw
     ResetAngle(MOTOR_PITCH); // reset angle pitch
-    delay(500); // only a little delay after reaching endstop position
+    RoboUtils::delay(500); // only a little delay after reaching endstop position
     
     speed_limit_yaw = speed_limit_pitch = 1; // turn on speed limit
     while(1) // set gimbal to home position ------------------------
@@ -273,8 +272,8 @@ void GimbalHome()
 
 void EndstopsControl()
 {
-    endstop_yaw = digitalRead(24);
-    endstop_pitch = digitalRead(25);
+    endstop_yaw = 1;//digitalRead(24);
+    endstop_pitch = 1;//digitalRead(25);
 
     if (endstop_yaw) speed_yaw = 0;
     if (endstop_pitch) speed_pitch = 0;

@@ -30,27 +30,9 @@ class RosNode
 
     void callback(const geometry_msgs::PoseStamped& msg)
     {
-      #if 0
-        std::cout << "header: " << std::endl;
-        std::cout << "  seq: " << msg.header.seq << std::endl;
-        std::cout << "  stamp: " << std::endl;
-        std::cout << "    secs: " << msg.header.stamp.sec << std::endl;
-        std::cout << "    nsecs: " << msg.header.stamp.nsec << std::endl;
-        std::cout << "  frame_id: " << msg.header.frame_id << std::endl;
-
-        std::cout << "pose: " << std::endl;
-        std::cout << "  position: " << std::endl;
-        std::cout << "    x: " << msg.pose.position.x << std::endl;
-        std::cout << "    y: " << msg.pose.position.y << std::endl;
-        std::cout << "    z: " << msg.pose.position.z << std::endl;
-        std::cout << "  orientation: " << std::endl;
-        std::cout << "    x: " << msg.pose.orientation.x << std::endl;
-        std::cout << "    y: " << msg.pose.orientation.y << std::endl;
-        std::cout << "    z: " << msg.pose.orientation.z << std::endl;
-        std::cout << "    w: " << msg.pose.orientation.w << std::endl;
-      #endif
       new_msg = msg;
     }
+
   private:
     ros::NodeHandle n;
     ros::Subscriber sub;
@@ -65,11 +47,11 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "gimbal");
 
   RosNode node;
+  ros::Rate loop_rate(100);
 
   // Register signal and signal handler
   signal(SIGINT, signal_callback_handler);
 
-  wiringPiSetup();
   fd = i2c_init(1); // i2c init
   GimbalInit();
   //GimbalHome();
@@ -92,17 +74,12 @@ int main(int argc, char **argv)
     SetAngle(ang_req.yaw, MOTOR_YAW, new_msg.header.stamp.sec, new_msg.header.stamp.nsec);
     km2_drive(fd, 0x71, speed_yaw, speed_pitch);
 
-    #if 1
-        std::cout.precision(2);
-        std::cout << "YAW =\t" << std::fixed << ang_req.yaw << "\t\t";
-        std::cout << "PITCH =\t" << std::fixed << ang_req.pitch << "\t\t";
-        std::cout << "ROLL =\t" << std::fixed << ang_req.roll << std::endl;
-    #endif
+    std::cout.precision(2);
+    std::cout << "YAW =\t" << std::fixed << ang_req.yaw << "\t\t";
+    std::cout << "PITCH =\t" << std::fixed << ang_req.pitch << "\t\t";
+    std::cout << "ROLL =\t" << std::fixed << ang_req.roll << std::endl;
 
-    #if 0  
-        std::cout.precision(1);
-        std::cout << std::fixed << ang_req.pitch << "\t" << std::fixed << angle_pitch << "\t" << elapsed_time << "\t" << speed_pitch << std::endl;
-    #endif
+    loop_rate.sleep();
   }
   i2c_close(fd); // i2c close
 
