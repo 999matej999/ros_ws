@@ -28,29 +28,6 @@ class RosNode
 
 		void callback_joy(const sensor_msgs::Joy& msg)
 		{
-			std::cout << "header: " << std::endl;
-			std::cout << "  seq: " << msg.header.seq << std::endl;
-			std::cout << "  stamp: " << std::endl;
-			std::cout << "    secs: " << msg.header.stamp.sec << std::endl;
-			std::cout << "    nsecs: " << msg.header.stamp.nsec << std::endl;
-			std::cout << "  frame_id: " << msg.header.frame_id << std::endl;
-
-			std::cout << "axes: [";
-			for(int i = 0; i < msg.axes.size(); ++i)
-			{
-				if(i != 0) std::cout << ", ";
-				std::cout << msg.axes[i];
-			}
-			std::cout << "]" << std::endl;
-
-			std::cout << "buttons: [";
-			for(int i = 0; i < msg.buttons.size(); ++i)
-			{
-				if(i != 0) std::cout << ", ";
-				std::cout << msg.buttons[i];
-			}
-			std::cout << "]" << std::endl;
-
 			new_msg_joy = msg;
 		}
 
@@ -94,19 +71,22 @@ int main(int argc, char **argv)
 			if(new_msg_joy.buttons[9] && !turbo_button_last) turbo = !turbo;
 
 			if(turbo == 1) speed = new_msg_joy.axes[1];
-			if(turbo == 0) speed = new_msg_joy.axes[1]/5;
+			else speed = new_msg_joy.axes[1]/5;
 
 			std::cout << "speed: " << speed << "\tdir: " << new_msg_joy.axes[3] << "\tturbo: " << turbo << std::endl;
 			servo1.SetDirection(speed);
 			servo2.SetDirection(new_msg_joy.axes[3]);
 			
 			turbo_button_last = new_msg_joy.buttons[9];
+		}
 
+		if(new_msg_head.header.seq > 0)
+		{
 			gimbal.set(new_msg_head.pose.orientation, new_msg_head.header.stamp);
 			gimbal.run();
-
-			loop_rate.sleep();
 		}
+
+		loop_rate.sleep();
 	}
 
 	delete i2c;
