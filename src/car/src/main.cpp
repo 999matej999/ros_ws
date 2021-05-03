@@ -2,15 +2,19 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
+#include <geometry_msgs/PoseStamped.h>
 
 #include <roboutils/utils.h>
 #include <roboutils/I2C.h>
 
 #include "PCA9685.h"
 #include "PCA9685Servo.h"
-using namespace RoboUtils;
+#include "gimbal.h"
 
-sensor_msgs::Joy new_msg = {};
+//using namespace RoboUtils;
+
+sensor_msgs::Joy new_msg_joy = {};
+geometry_msgs::PoseStamped new_msg_head = {};
 
 class RosNode
 {
@@ -18,10 +22,10 @@ class RosNode
   public:
     RosNode()
     {
-      sub = n.subscribe("/joy", 1, &RosNode::callback, this);
+      sub_joy = n.subscribe("/joy", 1, &RosNode::callback_joy, this);
     }
 
-    void callback(const sensor_msgs::Joy& msg)
+    void callback_joy(const sensor_msgs::Joy& msg)
     {
       std::cout << "header: " << std::endl;
       std::cout << "  seq: " << msg.header.seq << std::endl;
@@ -46,12 +50,12 @@ class RosNode
       }
       std::cout << "]" << std::endl;
 
-      new_msg = msg;
+      new_msg_joy = msg;
     }
 
   private:
     ros::NodeHandle n;
-    ros::Subscriber sub;
+    ros::Subscriber sub_joy;
 
 };
 
@@ -62,7 +66,7 @@ int main(int argc, char **argv)
   RosNode node;
   ros::Rate loop_rate(100);
 
-  auto i2c = new I2C();
+  auto i2c = new RoboUtils::I2C();
   PCA9685Servo servo1(i2c, 3);
   PCA9685Servo servo2(i2c, 6);
 
@@ -75,22 +79,22 @@ int main(int argc, char **argv)
   {
     ros::spinOnce();
     
-    if(new_msg.header.seq > 0)
+    if(new_msg_joy.header.seq > 0)
     {
       // here you can place some code
-      if(new_msg.buttons[9] && !turbo_button_last)
+      if(new_msg_joy.buttons[9] && !turbo_button_last)
       {
           turbo = !turbo;
       }
 
-      if(turbo == 1) rychlost = new_msg.axes[1];
-      if(turbo == 0) rychlost = new_msg.axes[1]/5;
+      if(turbo == 1) rychlost = new_msg_joy.axes[1];
+      if(turbo == 0) rychlost = new_msg_joy.axes[1]/5;
 
-      std::cout << "----- x: " << new_msg.axes[1] << "----- y: " << new_msg.axes[3] << "Turbo: " << new_msg.buttons[9] << "Turbo: " << turbo << "Rychlost: " << rychlost << std::endl;
+      std::cout << "----- x: " << new_msg_joy.axes[1] << "----- y: " << new_msg_joy.axes[3] << "Turbo: " << new_msg_joy.buttons[9] << "Turbo: " << turbo << "Rychlost: " << rychlost << std::endl;
       servo1.SetDirection(rychlost);
-      servo2.SetDirection(new_msg.axes[3]);
+      servo2.SetDirection(new_msg_joy.axes[3]);
       
-      turbo_button_last = new_msg.buttons[9];
+      turbo_button_last = new_msg_joy.buttons[9];
       loop_rate.sleep();
     }
   }
