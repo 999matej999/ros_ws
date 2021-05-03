@@ -23,6 +23,7 @@ class RosNode
     RosNode()
     {
       sub_joy = n.subscribe("/joy", 1, &RosNode::callback_joy, this);
+      sub_head = n.subscribe("/head", 1, &RosNode::callback_head, this);
     }
 
     void callback_joy(const sensor_msgs::Joy& msg)
@@ -53,9 +54,15 @@ class RosNode
       new_msg_joy = msg;
     }
 
+    void callback_head(const geometry_msgs::PoseStamped& msg)
+    {
+      new_msg_head = msg;
+    }
+
   private:
     ros::NodeHandle n;
     ros::Subscriber sub_joy;
+    ros::Subscriber sub_head;
 
 };
 
