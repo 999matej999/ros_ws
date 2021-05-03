@@ -55,9 +55,11 @@ public:
 	void setPWM(uint8_t, int);
 	int getPWM(uint8_t);
 
+protected:
+	void reset(void);
+
 private:
 	RoboUtils::I2C *i2c;
-	void reset(void);
 };
-#endif
 
+#endif

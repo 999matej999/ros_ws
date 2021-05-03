@@ -10,16 +10,16 @@
 #define SERVO_LEFT_DEFAULT_MS	0.8
 #define SERVO_RIGHT_DEFAULT_MS 	2.2
 
-class PCA9685Servo: PCA9685{
+class PCA9685Servo : PCA9685{
 public:
-    PCA9685Servo(RoboUtils::I2C *i2c);
+    PCA9685Servo(RoboUtils::I2C *i2c, uint8_t nChannel);
     ~PCA9685Servo();
 
-    void SetDirection(uint8_t nChannel, float nDir);
+    void SetDirection(float nDir);
 
 private:
     RoboUtils::I2C *i2c;
-    void reset(void);
+    uint8_t nChannel;
 
 };
 

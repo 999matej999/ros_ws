@@ -21,19 +21,7 @@
  * Copyright © 2012 Georgi Todorov  <terahz@geodar.com>
  */
 
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <linux/i2c.h>
-#include <linux/i2c-dev.h>
-#include <stdio.h>      /* Standard I/O functions */
-#include <fcntl.h>
-#include <syslog.h>		/* Syslog functionallity */
-#include <inttypes.h>
-#include <errno.h>
-#include <math.h>
-
-#include "roboutils/I2C.h"
+#include <roboutils/I2C.h>
 #include "PCA9685.h"
 
 //! Constructor takes bus and address arguments
