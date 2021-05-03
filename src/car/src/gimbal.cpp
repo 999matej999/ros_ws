@@ -207,8 +207,30 @@ void Gimbal::home()
 
 void Gimbal::endstopsControl()
 {
-	endstop_yaw = adc.readChannel(0) > HALL_SENSOR_THRESHOLD_YAW; // yaw axis endstop
-	endstop_pitch = adc.readChannel(1) > HALL_SENSOR_THRESHOLD_PITCH; // pitch axis endstop
+	auto raw0 = adc.readChannel(0);
+	auto raw1 = adc.readChannel(1);
+
+	samples_yaw[count] = adc.readChannel(0);
+	samples_pitch[count] = adc.readChannel(1);
+
+	if(++count >= SAMPLES) count = 0;
+
+	uint32_t sum_yaw = 0;
+	uint32_t sum_pitch = 0;
+
+	for(size_t i = 0; i < SAMPLES; ++i)
+	{
+		sum_yaw += samples_yaw[i];
+		sum_pitch += samples_pitch[i];
+	}
+
+	uint16_t avg_yaw = sum_yaw / SAMPLES;
+	uint16_t avg_pitch = sum_pitch / SAMPLES;
+
+	endstop_yaw = avg_yaw > HALL_SENSOR_THRESHOLD_YAW; // yaw axis endstop
+	endstop_pitch = avg_pitch > HALL_SENSOR_THRESHOLD_PITCH; // pitch axis endstop
+
+	//std::cout << raw0 << ", " << raw1 << ", " << avg_yaw << ", " << avg_pitch << std::endl;
 
 	if(endstop_yaw) speed_yaw = 0;
 	if(endstop_pitch) speed_pitch = 0;

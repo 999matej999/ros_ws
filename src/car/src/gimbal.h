@@ -54,8 +54,10 @@
 #define YAW_OFFSET          180     // YAW offset for home position
 #define PITCH_OFFSET        90      // PITCH offset for home possition
 
-#define HALL_SENSOR_THRESHOLD_YAW 2680
-#define HALL_SENSOR_THRESHOLD_PITCH 2700
+#define SAMPLES				5
+
+#define HALL_SENSOR_THRESHOLD_YAW 2650
+#define HALL_SENSOR_THRESHOLD_PITCH 2850
 
 #include "geometry_msgs/PoseStamped.h"
 #include <roboutils/I2C.h>
@@ -87,6 +89,10 @@ private:
 	RoboUtils::I2C *i2c;
 	RoboUtils::ADC adc;
 	uint8_t addr;
+
+	uint16_t samples_yaw[SAMPLES]= {};
+	uint16_t samples_pitch[SAMPLES] = {};
+	size_t count = 0;
 	
 	// timing -------------------------------------------------------------------
 	long double actual_time_pitch, actual_time_yaw, prev_time_pitch, prev_time_yaw;
